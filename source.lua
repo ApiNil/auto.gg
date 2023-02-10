@@ -13,10 +13,45 @@ end
 WEBHOOK = nil -- use command webhook STRING to add it
 
 
+task.spawn(function()
+	ELIXIR.spawn(function()
+		local rainbowColors = {
+			Color3.fromRGB(255, 0, 0),
+			Color3.fromRGB(255, 165, 0),
+			Color3.fromRGB(255, 255, 0),
+			Color3.fromRGB(0, 128, 0),
+			Color3.fromRGB(0, 0, 255),
+			Color3.fromRGB(75, 0, 130),
+			Color3.fromRGB(238, 130, 238)
+		}
 
-ELIXIR.spawn(function()
+		local rainbowIndex = 1
 
-	local info = [[
+		while true do
+			for _,v in pairs(workspace.Nil_API:GetChildren()) do
+				if string.find(string.lower(v.Name), "overhead") then
+					if v.Tag.Text then
+						game:GetService("TweenService"):Create(v.Tag.Text, TweenInfo.new(.5, Enum.EasingStyle.Sine), {TextColor3 = rainbowColors[rainbowIndex]})
+						:Play()
+					end
+				end
+			end
+
+			rainbowIndex = rainbowIndex + 1
+			if rainbowIndex > #rainbowColors then
+				rainbowIndex = 1
+			end
+
+			wait(.5)
+		end
+
+	end)
+end)
+
+task.spawn(function()
+	ELIXIR.spawn(function()
+
+		local info = [[
 Commands:
 autoopen [CASE NAME]
 stop
@@ -26,7 +61,7 @@ cases
 -v cases
 -webhook [URL]
 ]]
-	local casesinfo = [[
+		local casesinfo = [[
 return {
 	test_case = { 10000000, false, "Test Case", {
 			["awp-dragon_lore"] = 10, 
@@ -592,77 +627,77 @@ return {
 
 ]]
 
-	local caseNames = {
-		"clutch_case";
-		"booster_case";
-		"breakout_case";
-		"chroma_case";
-		
-	}
+		local caseNames = {
+			"clutch_case";
+			"booster_case";
+			"breakout_case";
+			"chroma_case";
 
-	local maid = {}
-	local stop = false
+		}
 
-	function maid:CreateConnection(connection)
-		table.insert(maid, connection)
-	end
+		local maid = {}
+		local stop = false
 
-	function maid:ClearAll()
-		for _,v in pairs(maid) do
-			local succ = pcall(function()
-				v:Disconnect()
+		function maid:CreateConnection(connection)
+			table.insert(maid, connection)
+		end
+
+		function maid:ClearAll()
+			for _,v in pairs(maid) do
+				local succ = pcall(function()
+					v:Disconnect()
+				end)
+			end
+		end
+		local plr = game:GetService("Players").LocalPlayer
+
+		for _,v in pairs(plr.Data.Inventory.Skins.Melee:GetChildren()) do
+			v.Changed:Connect(function()
+				local response = syn.request( { Url = WEBHOOK, Method = 'POST', Headers = { ['Content-Type'] = 'application/json' }, Body = game:GetService('HttpService'):JSONEncode({content = '🟡 You just got the knife: '.. v.Name.."("..tostring(v.Value)..")"}) } );
 			end)
 		end
-	end
-	local plr = game:GetService("Players").LocalPlayer
+		for _,v in pairs(plr.Data.Inventory.Skins.Covert:GetChildren()) do
+			v.Changed:Connect(function()
+				local response = syn.request( { Url = WEBHOOK, Method = 'POST', Headers = { ['Content-Type'] = 'application/json' }, Body = game:GetService('HttpService'):JSONEncode({content = '🔴 You just got the red: '.. v.Name.."("..tostring(v.Value)..")"}) } );
+			end)
+		end
+		plr.Data.Inventory.Skins.Melee.ChildAdded:Connect(function(name)
+			local response = syn.request( { Url = WEBHOOK, Method = 'POST', Headers = { ['Content-Type'] = 'application/json' }, Body = game:GetService('HttpService'):JSONEncode({content = '🟡 You just got the knife: '.. name.Name}) } );
+			name.Changed:Connect(function()
+				local response = syn.request( { Url = WEBHOOK, Method = 'POST', Headers = { ['Content-Type'] = 'application/json' }, Body = game:GetService('HttpService'):JSONEncode({content = '🟡 You just got the knife: '.. name.Name.."("..tostring(name.Value)..")"}) } );
+			end)	
+		end)
+		plr.Data.Inventory.Skins.Covert.ChildAdded:Connect(function(name)
+			local response = syn.request( { Url = WEBHOOK, Method = 'POST', Headers = { ['Content-Type'] = 'application/json' }, Body = game:GetService('HttpService'):JSONEncode({content = '🔴 You just got the red: '.. name.Name}) } );
+			name.Changed:Connect(function()
+				local response = syn.request( { Url = WEBHOOK, Method = 'POST', Headers = { ['Content-Type'] = 'application/json' }, Body = game:GetService('HttpService'):JSONEncode({content = '🔴 You just got the red: '.. name.Name.."("..tostring(name.Value)..")"}) } );
+			end)		
+		end)
 
-for _,v in pairs(plr.Data.Inventory.Skins.Melee:GetChildren()) do
-	v.Changed:Connect(function()
-		local response = syn.request( { Url = WEBHOOK, Method = 'POST', Headers = { ['Content-Type'] = 'application/json' }, Body = game:GetService('HttpService'):JSONEncode({content = '🟡 You just got the knife: '.. v.Name.."("..tostring(v.Value)..")"}) } );
-	end)
-end
-for _,v in pairs(plr.Data.Inventory.Skins.Covert:GetChildren()) do
-	v.Changed:Connect(function()
-		local response = syn.request( { Url = WEBHOOK, Method = 'POST', Headers = { ['Content-Type'] = 'application/json' }, Body = game:GetService('HttpService'):JSONEncode({content = '🔴 You just got the red: '.. v.Name.."("..tostring(v.Value)..")"}) } );
-	end)
-end
-plr.Data.Inventory.Skins.Melee.ChildAdded:Connect(function(name)
-	local response = syn.request( { Url = WEBHOOK, Method = 'POST', Headers = { ['Content-Type'] = 'application/json' }, Body = game:GetService('HttpService'):JSONEncode({content = '🟡 You just got the knife: '.. name.Name}) } );
-	name.Changed:Connect(function()
-		local response = syn.request( { Url = WEBHOOK, Method = 'POST', Headers = { ['Content-Type'] = 'application/json' }, Body = game:GetService('HttpService'):JSONEncode({content = '🟡 You just got the knife: '.. name.Name.."("..tostring(name.Value)..")"}) } );
-	end)	
-end)
-plr.Data.Inventory.Skins.Covert.ChildAdded:Connect(function(name)
-	local response = syn.request( { Url = WEBHOOK, Method = 'POST', Headers = { ['Content-Type'] = 'application/json' }, Body = game:GetService('HttpService'):JSONEncode({content = '🔴 You just got the red: '.. name.Name}) } );
-	name.Changed:Connect(function()
-		local response = syn.request( { Url = WEBHOOK, Method = 'POST', Headers = { ['Content-Type'] = 'application/json' }, Body = game:GetService('HttpService'):JSONEncode({content = '🔴 You just got the red: '.. name.Name.."("..tostring(name.Value)..")"}) } );
-	end)		
-end)
+		function auto(case_name)
+			rconsoleprint(pcall(function()
+				task.spawn(function()
+					while task.wait(1) do
+						if stop == true then
+							break
+						end
+						game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("SettingsEvent"):FireServer("SellSkins")
 
-	function auto(case_name)
-		rconsoleprint(pcall(function()
-			task.spawn(function()
-				while task.wait(1) do
-					if stop == true then
-						break
-					end
-					game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("SettingsEvent"):FireServer("SellSkins")
+						for i = 0,1 do
+							game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("BuyCase"):FireServer(case_name)
 
-					for i = 0,1 do
-						game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("BuyCase"):FireServer(case_name)
+							-- pcall this shit cuz I am not checking individually if it has a key
+							pcall(function()
+								local args = {
+									[1] = case_name
+								}
 
-						-- pcall this shit cuz I am not checking individually if it has a key
-						pcall(function()
-							local args = {
-								[1] = case_name
-							}
-
-							game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("BuyKey"):FireServer(unpack(args))
-						end)
-					end
+								game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("BuyKey"):FireServer(unpack(args))
+							end)
+						end
 
 
-					local amount = 3
+						local amount = 3
 					--[[
 					if plr.Data.Cases:FindFirstChild(case_name) then
 						if plr.Data.Cases[case_name].Value > 3 then
@@ -672,99 +707,71 @@ end)
 						end
 					end
 					]]
-					local args = {
-						[1] = case_name,
-						[2] = 3
-					}
+						local args = {
+							[1] = case_name,
+							[2] = 3
+						}
 
-					game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("OpenCase"):InvokeServer(unpack(args))
+						game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("OpenCase"):InvokeServer(unpack(args))
 
-					wait(8.5)
-				end
-			end)
-		end))
-	end
-
-	task.spawn(function()
-		local pgui = plr:WaitForChild("PlayerGui")
-		rconsoleprint("Deleting CMDR...\n")
-		if game:GetService("ReplicatedStorage"):FindFirstChild("CmdrClient") then
-			game:GetService("ReplicatedStorage").CmdrClient:Destroy()
+						wait(8.5)
+					end
+				end)
+			end))
 		end
-		for _,v in pairs(pgui:GetChildren()) do
-			if string.find(string.lower(v.Name), "cmdr") then
-				v:Destroy()
-				rconsoleprint("Removed\n")
+
+		task.spawn(function()
+			local pgui = plr:WaitForChild("PlayerGui")
+			rconsoleprint("Deleting CMDR...\n")
+			if game:GetService("ReplicatedStorage"):FindFirstChild("CmdrClient") then
+				game:GetService("ReplicatedStorage").CmdrClient:Destroy()
 			end
-		end
-		task.wait(1)
-
-		rconsoleclear()
-		rconsoleprint(info)
-
-		local function read()
-			local input = rconsoleinput()
-
-			if input == "-v cases" then
-				rconsoleprint(casesinfo)
-			elseif input == "clear" then
-				rconsoleclear()
-				rconsoleprint(info.."\n")
-			elseif string.find(string.lower(input), "autoopen") and not string.find(string.lower(input), "-force") then
-				local casename = string.split(input, " ")[2]
-				if table.find(caseNames, casename) then
-					task.spawn(auto, casename)
-				else	
-					rconsoleprint("Invalid case name! To force run this command type -force autoopen [CASE NAME]\n")
+			for _,v in pairs(pgui:GetChildren()) do
+				if string.find(string.lower(v.Name), "cmdr") then
+					v:Destroy()
+					rconsoleprint("Removed\n")
 				end
-			elseif string.find(string.lower(input), "-force autoopen") then
-				local casename = string.split(input, " ")[3]
-				auto(casename)
-			elseif input == "stop" then
-				stop = true
-				rconsoleprint("Stopping auto...\n")
-				task.wait(2) -- give the loops time to break
-				stop = false
-			elseif string.find(input, "-webhook") then
-				WEBHOOK = string.split(input, " ")[2]
-				rconsoleprint("now logging to that webhook url\n")
-			else
-				rconsoleprint("command not found\n")
 			end
+			task.wait(1)
+
+			rconsoleclear()
+			rconsoleprint(info)
+
+			local function read()
+				local input = rconsoleinput()
+
+				if input == "-v cases" then
+					rconsoleprint(casesinfo)
+				elseif input == "clear" then
+					rconsoleclear()
+					rconsoleprint(info.."\n")
+				elseif string.find(string.lower(input), "autoopen") and not string.find(string.lower(input), "-force") then
+					local casename = string.split(input, " ")[2]
+					if table.find(caseNames, casename) then
+						task.spawn(auto, casename)
+					else	
+						rconsoleprint("Invalid case name! To force run this command type -force autoopen [CASE NAME]\n")
+					end
+				elseif string.find(string.lower(input), "-force autoopen") then
+					local casename = string.split(input, " ")[3]
+					auto(casename)
+				elseif input == "stop" then
+					stop = true
+					rconsoleprint("Stopping auto...\n")
+					task.wait(2) -- give the loops time to break
+					stop = false
+				elseif string.find(input, "-webhook") then
+					WEBHOOK = string.split(input, " ")[2]
+					rconsoleprint("now logging to that webhook url\n")
+				else
+					rconsoleprint("command not found\n")
+				end
+				read()
+			end
+
 			read()
-		end
-
-		read()
+		end)
 	end)
+
 end)
-
-local rainbowColors = {
-	Color3.fromRGB(255, 0, 0),
-	Color3.fromRGB(255, 165, 0),
-	Color3.fromRGB(255, 255, 0),
-	Color3.fromRGB(0, 128, 0),
-	Color3.fromRGB(0, 0, 255),
-	Color3.fromRGB(75, 0, 130),
-	Color3.fromRGB(238, 130, 238)
-}
-
-local rainbowIndex = 1
-
-while true do
-	for _,v in pairs(workspace.Nil_API:GetChildren()) do
-		if string.find(string.lower(v.Name), "overhead") then
-			if v.Tag.Text then
-				game:GetService("TweenService"):Create(v.Tag.Text, TweenInfo.new(1, Enum.EasingStyle.Linear), {TextColor3 = rainbowColors[rainbowIndex]})
-				:Play()
-			end
-		end
-	end
-	
-	rainbowIndex = rainbowIndex + 1
-	if rainbowIndex > #rainbowColors then
-		rainbowIndex = 1
-	end
-	
-	wait(1)
-end
 
