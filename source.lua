@@ -1,5 +1,5 @@
 local ELIXIR = {}
-rconsolename("auto.gg")
+rconsolename("auto.gg | Built on Elixir")
 
 function ELIXIR.spawn(callback)
 	rconsoleprint('@@MAGENTA@@')
