@@ -11,7 +11,7 @@ function ELIXIR.spawn(callback)
 end
 
 WEBHOOK = nil -- use command webhook STRING to add it
-
+local case_open_delay = 8.5 -- default
 
 
 
@@ -24,6 +24,7 @@ autoopen [CASE NAME]
 stop
 clear
 cmds
+casespeed [NUMBER]
 cases
 -v cases
 -webhook [URL]
@@ -681,7 +682,7 @@ return {
 
 						game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("OpenCase"):InvokeServer(unpack(args))
 
-						wait(8.5)
+						wait(case_open_delay)
 					end
 				end)
 			end))
@@ -730,6 +731,8 @@ return {
 				elseif string.find(input, "-webhook") then
 					WEBHOOK = string.split(input, " ")[2]
 					rconsoleprint("now logging to that webhook url\n")
+				elseif string.find(input, "casespeed") then
+					case_open_delay = tonumber(string.split(input, " ")[2])
 				else
 					rconsoleprint("command not found\n")
 				end
