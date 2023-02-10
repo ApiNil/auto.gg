@@ -5,6 +5,8 @@ function ELIXIR.spawn(callback)
 	rconsoleprint('@@MAGENTA@@')
 	rconsoleprint('Built on Elixir\n')
 	task.wait(2)
+	rconsoleprint('THIS IS NOT THE FINAL SCRIPT. It is still a WIP\n')
+	task.wait(2)
 	task.spawn(callback)
 end
 
