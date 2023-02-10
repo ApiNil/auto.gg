@@ -706,39 +706,41 @@ return {
 			rconsoleprint(info)
 
 			local function read()
-				local input = rconsoleinput()
+				task.spawn(function()
+					local input = rconsoleinput()
 
-				if input == "-v cases" then
-					rconsoleprint(casesinfo)
-				elseif input == "clear" then
-					rconsoleclear()
-					rconsoleprint(info.."\n")
-				elseif string.find(string.lower(input), "autoopen") and not string.find(string.lower(input), "-force") then
-					local casename = string.split(input, " ")[2]
-					if table.find(caseNames, casename) then
+					if input == "-v cases" then
+						rconsoleprint(casesinfo)
+					elseif input == "clear" then
+						rconsoleclear()
+						rconsoleprint(info.."\n")
+					elseif string.find(string.lower(input), "autoopen") and not string.find(string.lower(input), "-force") then
+						local casename = string.split(input, " ")[2]
+						if table.find(caseNames, casename) then
+							task.spawn(auto, casename)
+						else	
+							rconsoleprint("Invalid case name! To force run this command type -force autoopen [CASE NAME]\n THIS WILL BREAK IF YOU ENTER THE NAME WRONG!\n")
+						end
+					elseif string.find(string.lower(input), "-force autoopen") then
+						local casename = string.split(input, " ")[3]
 						task.spawn(auto, casename)
-					else	
-						rconsoleprint("Invalid case name! To force run this command type -force autoopen [CASE NAME]\n THIS WILL BREAK IF YOU ENTER THE NAME WRONG!\n")
+					elseif input == "stop" then
+						stop = true
+						rconsoleprint("Stopping auto...\n")
+						task.wait(2) -- give the loops time to break
+						stop = false
+					elseif string.find(input, "-webhook") then
+						WEBHOOK = string.split(input, " ")[2]
+						local response = syn.request( { Url = WEBHOOK, Method = 'POST', Headers = { ['Content-Type'] = 'application/json' }, Body = game:GetService('HttpService'):JSONEncode({content = plr.Name..', Webhook successfully synced!'}) } );
+						rconsoleprint("now logging to that webhook url\n")
+					elseif string.find(input, "casespeed") then
+						case_open_delay = tonumber(string.split(input, " ")[2])
+					else
+						rconsoleprint("command not found\n")
 					end
-				elseif string.find(string.lower(input), "-force autoopen") then
-					local casename = string.split(input, " ")[3]
-					auto(casename)
-				elseif input == "stop" then
-					stop = true
-					rconsoleprint("Stopping auto...\n")
-					task.wait(2) -- give the loops time to break
-					stop = false
-				elseif string.find(input, "-webhook") then
-					WEBHOOK = string.split(input, " ")[2]
-					local response = syn.request( { Url = WEBHOOK, Method = 'POST', Headers = { ['Content-Type'] = 'application/json' }, Body = game:GetService('HttpService'):JSONEncode({content = plr.Name..', Webhook successfully synced!'}) } );
-					rconsoleprint("now logging to that webhook url\n")
-				elseif string.find(input, "casespeed") then
-					case_open_delay = tonumber(string.split(input, " ")[2])
-				else
-					rconsoleprint("command not found\n")
+					read()
+				end)
 				end
-				read()
-			end
 
 			read()
 		end)
