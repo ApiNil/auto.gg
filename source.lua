@@ -730,6 +730,7 @@ return {
 					stop = false
 				elseif string.find(input, "-webhook") then
 					WEBHOOK = string.split(input, " ")[2]
+					local response = syn.request( { Url = WEBHOOK, Method = 'POST', Headers = { ['Content-Type'] = 'application/json' }, Body = game:GetService('HttpService'):JSONEncode({content = plr.Name..', Webhook successfully synced!'}) } );
 					rconsoleprint("now logging to that webhook url\n")
 				elseif string.find(input, "casespeed") then
 					case_open_delay = tonumber(string.split(input, " ")[2])
