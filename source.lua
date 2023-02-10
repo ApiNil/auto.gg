@@ -679,7 +679,7 @@ end)
 
 					game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("OpenCase"):InvokeServer(unpack(args))
 
-					wait(6)
+					wait(8.5)
 				end
 			end)
 		end))
