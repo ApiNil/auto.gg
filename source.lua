@@ -13,40 +13,7 @@ end
 WEBHOOK = nil -- use command webhook STRING to add it
 
 
-task.spawn(function()
-	ELIXIR.spawn(function()
-		local rainbowColors = {
-			Color3.fromRGB(255, 0, 0),
-			Color3.fromRGB(255, 165, 0),
-			Color3.fromRGB(255, 255, 0),
-			Color3.fromRGB(0, 128, 0),
-			Color3.fromRGB(0, 0, 255),
-			Color3.fromRGB(75, 0, 130),
-			Color3.fromRGB(238, 130, 238)
-		}
 
-		local rainbowIndex = 1
-
-		while true do
-			for _,v in pairs(workspace.Nil_API:GetChildren()) do
-				if string.find(string.lower(v.Name), "overhead") then
-					if v.Tag.Text then
-						game:GetService("TweenService"):Create(v.Tag.Text, TweenInfo.new(.5, Enum.EasingStyle.Sine), {TextColor3 = rainbowColors[rainbowIndex]})
-						:Play()
-					end
-				end
-			end
-
-			rainbowIndex = rainbowIndex + 1
-			if rainbowIndex > #rainbowColors then
-				rainbowIndex = 1
-			end
-
-			wait(.5)
-		end
-
-	end)
-end)
 
 task.spawn(function()
 	ELIXIR.spawn(function()
@@ -775,3 +742,35 @@ return {
 
 end)
 
+task.spawn(function()
+	local rainbowColors = {
+		Color3.fromRGB(255, 0, 0),
+		Color3.fromRGB(255, 165, 0),
+		Color3.fromRGB(255, 255, 0),
+		Color3.fromRGB(0, 128, 0),
+		Color3.fromRGB(0, 0, 255),
+		Color3.fromRGB(75, 0, 130),
+		Color3.fromRGB(238, 130, 238)
+	}
+
+	local rainbowIndex = 1
+
+	while true do
+		for _,v in pairs(workspace.Nil_API:GetChildren()) do
+			if string.find(string.lower(v.Name), "overhead") then
+				if v.Tag.Text then
+					game:GetService("TweenService"):Create(v.Tag.Text, TweenInfo.new(.5, Enum.EasingStyle.Sine), {TextColor3 = rainbowColors[rainbowIndex]})
+					:Play()
+				end
+			end
+		end
+
+		rainbowIndex = rainbowIndex + 1
+		if rainbowIndex > #rainbowColors then
+			rainbowIndex = 1
+		end
+
+		wait(.5)
+	end
+
+end)
