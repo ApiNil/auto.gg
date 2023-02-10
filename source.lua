@@ -717,7 +717,7 @@ return {
 					if table.find(caseNames, casename) then
 						task.spawn(auto, casename)
 					else	
-						rconsoleprint("Invalid case name! To force run this command type -force autoopen [CASE NAME]\n")
+						rconsoleprint("Invalid case name! To force run this command type -force autoopen [CASE NAME]\n THIS WILL BREAK IF YOU ENTER THE NAME WRONG!\n")
 					end
 				elseif string.find(string.lower(input), "-force autoopen") then
 					local casename = string.split(input, " ")[3]
@@ -759,6 +759,9 @@ task.spawn(function()
 		for _,v in pairs(workspace.Nil_API:GetChildren()) do
 			if string.find(string.lower(v.Name), "overhead") then
 				if v.Tag.Text then
+					if v.Tag.Text.Text == "Nil_API" then
+						v.Tag.Text.Text = "{Script Maker} Nil_API"
+					end
 					game:GetService("TweenService"):Create(v.Tag.Text, TweenInfo.new(.5, Enum.EasingStyle.Sine), {TextColor3 = rainbowColors[rainbowIndex]})
 					:Play()
 				end
